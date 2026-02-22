@@ -1,80 +1,64 @@
-import { Alert, Card, Col } from "react-bootstrap";
+import { Card, Col } from "react-bootstrap";
 import { useState } from "react";
-import { useEffect } from "react";
 
-
-const Event = ({ event }) => {
-
-
+const Event = ({ event, onBook }) => {
     const [like, setLike] = useState(event.like);
-    const [showAlert, setShowAlert] = useState(false);
     const [nbTickets, setNbTickets] = useState(event.nbTickets);
     const [nbParticipants, setNbParticipants] = useState(event.nbParticipants);
 
-    const handleLike = () => {
-        setLike(!like);
-    }
+    const isSoldOut = nbTickets === 0;
+
+    const handleLike = () => setLike(!like);
 
     const bookingMessage = () => {
-        setShowAlert(true);
+        if (isSoldOut) return;
         setNbTickets(nbTickets - 1);
         setNbParticipants(nbParticipants + 1);
-    }
-
+        onBook(event);
+    };
 
     return (
-        <>
+        <Col>
+            <Card style={{ width: '500px' }}>
 
-            <Alert show={showAlert} variant="success" onClose={() => setShowAlert(false)} dismissible>
-                You have booked for {event.name} event!
-            </Alert>
-
-            <Col>
-                <Card style={{ width: '500px' }}>
+                <div style={{ position: 'relative' }}>
                     <Card.Img
                         variant="top"
                         src={`/images/${event.img}`}
-                        style={{ height: '320px' }}
+                        style={{ height: '320px', filter: isSoldOut ? 'grayscale(100%)' : 'none' }}
                     />
+                    {isSoldOut && (
+                        <img
+                            src="/images/sold_out.png"
+                            alt="Sold Out"
+                            style={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                width: '60%',
+                            }}
+                        />
+                    )}
+                </div>
 
-                    <Card.Body >
-                        <Card.Title>{event.name}</Card.Title>
-                        <Card.Text>
-                            {event.description}
-                        </Card.Text>
-
-                        <Card.Text>
-                            Price: ${event.price}
-                        </Card.Text>
-
-                        <Card.Text>
-                            nbTickets: {nbTickets}
-                        </Card.Text>
-
-                        <Card.Text>
-                            nbParticipants: {nbParticipants}
-                        </Card.Text>
-
-                        <div className="gap">
-                            <button
-                                onClick={handleLike}
-                            >
-                                {like ? "like" : "dislike"}
-                            </button>
-
-
-                            <button onClick={bookingMessage}>
-                                Book event
-                            </button>
-
-                        </div>
-                    </Card.Body>
-
-
-
-                </Card>
-            </Col>
-        </>
+                <Card.Body>
+                    <Card.Title>{event.name}</Card.Title>
+                    <Card.Text>{event.description}</Card.Text>
+                    <Card.Text>Price: ${event.price}</Card.Text>
+                    <Card.Text>nbTickets: {nbTickets}</Card.Text>
+                    <Card.Text>nbParticipants: {nbParticipants}</Card.Text>
+                    <div className="gap">
+                        <button onClick={handleLike}>
+                            {like ? "like" : "dislike"}
+                        </button>
+                        <button onClick={bookingMessage} disabled={isSoldOut}>
+                            {isSoldOut ? "Sold Out" : "Book event"}
+                        </button>
+                    </div>
+                </Card.Body>
+            </Card>
+        </Col>
     );
 };
 

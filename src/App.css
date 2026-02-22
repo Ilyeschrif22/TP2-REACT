@@ -49,3 +49,13 @@
   gap: 1em;
 }
 
+.events-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  justify-content: center;
+  align-items: flex-start;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
