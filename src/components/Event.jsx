@@ -1,5 +1,6 @@
 import { Card, Col } from "react-bootstrap";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Event = ({ event, onBook }) => {
     const [like, setLike] = useState(event.like);
@@ -43,7 +44,9 @@ const Event = ({ event, onBook }) => {
                 </div>
 
                 <Card.Body>
-                    <Card.Title>{event.name}</Card.Title>
+                    <Card.Title>
+                        <Link to={`/events/${event.name}`}>{event.name}</Link>
+                    </Card.Title>
                     <Card.Text>{event.description}</Card.Text>
                     <Card.Text>Price: ${event.price}</Card.Text>
                     <Card.Text>nbTickets: {nbTickets}</Card.Text>
@@ -55,6 +58,7 @@ const Event = ({ event, onBook }) => {
                         <button onClick={bookingMessage} disabled={isSoldOut}>
                             {isSoldOut ? "Sold Out" : "Book event"}
                         </button>
+
                     </div>
                 </Card.Body>
             </Card>
