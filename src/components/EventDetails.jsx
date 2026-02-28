@@ -1,28 +1,36 @@
 import eventsData from "../data/events.json";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";               
+import { useParams } from "react-router-dom";
+import { getEventById } from "../service/api";
 
 const EventDetails = () => {
-  
-    const {name} = useParams()
 
-    const [event, setEvent] = useState(null);
+  const { id } = useParams()
 
-    useEffect(() => {
-        console.log(name);
-        const foundEvent = eventsData.find(event => event.name === name);
-        setEvent(foundEvent);
-    }, [name]);
-  
+  const [event, setEvent] = useState(null);
+
+  useEffect(() => {
+    const fetchEventById = async () => {
+      try {
+        const response = await getEventById(id);
+        setEvent(response);
+      } catch (error) {
+        console.error("Event does not exist", error);
+      }
+    }
+
+    fetchEventById();
+  }, [id]);
+
 
   return (
     <div>
       <h2>EventDetails</h2>
-        <h1>{event?.name}</h1>
-        <p>{event?.description}</p>
-        <p>Price: ${event?.price}</p>
-        <p>nbTickets: {event?.nbTickets}</p>
-        <p>nbParticipants: {event?.nbParticipants}</p>
+      <h1>{event?.name}</h1>
+      <p>{event?.description}</p>
+      <p>Price: ${event?.price}</p>
+      <p>nbTickets: {event?.nbTickets}</p>
+      <p>nbParticipants: {event?.nbParticipants}</p>
     </div>
   );
 };

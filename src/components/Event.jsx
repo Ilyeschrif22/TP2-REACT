@@ -1,6 +1,7 @@
 import { Card, Col } from "react-bootstrap";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { deleteEvent } from "../service/api";
 
 const Event = ({ event, onBook }) => {
     const [like, setLike] = useState(event.like);
@@ -16,6 +17,15 @@ const Event = ({ event, onBook }) => {
         setNbTickets(nbTickets - 1);
         setNbParticipants(nbParticipants + 1);
         onBook(event);
+    };
+
+    const handleDelete = async () => {
+    try {
+        await deleteEvent(event.id);
+        window.location.reload();
+    } catch (error) {
+        console.error("Error deleting event:", error);
+    }
     };
 
     return (
@@ -45,18 +55,45 @@ const Event = ({ event, onBook }) => {
 
                 <Card.Body>
                     <Card.Title>
-                        <Link to={`/events/${event.name}`}>{event.name}</Link>
+                        <Link to={`/events/${event.id}`} className="text-decoration-none text-dark">
+                            {event.name}
+                        </Link>
                     </Card.Title>
+
                     <Card.Text>{event.description}</Card.Text>
                     <Card.Text>Price: ${event.price}</Card.Text>
                     <Card.Text>nbTickets: {nbTickets}</Card.Text>
                     <Card.Text>nbParticipants: {nbParticipants}</Card.Text>
-                    <div className="gap">
-                        <button onClick={handleLike}>
-                            {like ? "like" : "dislike"}
+
+                    <div className="d-flex gap-2 flex-wrap mt-3">
+
+                        <button
+                            className="btn btn-dark"
+                            onClick={handleLike}
+                        >
+                            {like ? "Dislike" : "Like"}
                         </button>
-                        <button onClick={bookingMessage} disabled={isSoldOut}>
-                            {isSoldOut ? "Sold Out" : "Book event"}
+
+                        <button
+                            className="btn btn-dark"
+                            onClick={bookingMessage}
+                            disabled={isSoldOut}
+                        >
+                            {isSoldOut ? "Sold Out" : "Book Event"}
+                        </button>
+
+                        <Link
+                            to={`/update/${event.id}`}
+                            className="btn btn-dark"
+                        >
+                            Update
+                        </Link>
+
+                        <button
+                            className="btn btn-dark"
+                            onClick={handleDelete}
+                        >
+                            Delete
                         </button>
 
                     </div>

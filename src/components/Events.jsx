@@ -3,22 +3,34 @@ import { Alert } from "react-bootstrap";
 import eventsData from "../data/events.json";
 import Event from "./Event";
 
+import { getallEvents } from "../service/api";
+
 const Events = () => {
     const [events, setEvents] = useState([]);
     const [bookedEvent, setBookedEvent] = useState(null);
 
     useEffect(() => {
-        setEvents(eventsData);
+        const fetchEvents = async () => {
+            try {
+                const response = await getallEvents();
+                setEvents(response.data);
+            } catch (error) {
+                console.error("Error fetching events:", error);
+            }
+        };
+
+        fetchEvents();
     }, []);
+
 
     useEffect(() => {
         if (bookedEvent === null) return;
 
         const timer = setTimeout(() => {
-            setBookedEvent(null); 
+            setBookedEvent(null);
         }, 3000);
 
-        return () => clearTimeout(timer); 
+        return () => clearTimeout(timer);
     }, [bookedEvent]);
 
     return (
